@@ -3,10 +3,7 @@ package com.example.csc325_firebase_webview_auth.view;//package modelview;
 import com.example.csc325_firebase_webview_auth.model.Person;
 import com.example.csc325_firebase_webview_auth.viewmodel.AccessDataViewModel;
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
-import com.google.cloud.firestore.QuerySnapshot;
-import com.google.cloud.firestore.WriteResult;
+import com.google.cloud.firestore.*;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 
@@ -19,8 +16,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+
+import static com.example.csc325_firebase_webview_auth.view.App.scene;
 
 public class AccessFBView {
 
@@ -40,6 +40,8 @@ public class AccessFBView {
     @FXML
     private MenuItem closeMenuItem;
     @FXML
+    private MenuItem deleteMenuItem;
+    @FXML
     private TextArea outputField;
     @FXML
     private TableView <Person> tableView;
@@ -57,6 +59,8 @@ public class AccessFBView {
     }
 
     public void initialize() {
+        applyStylesheet();
+
         AccessDataViewModel accessDataViewModel = new AccessDataViewModel();
         nameField.textProperty().bindBidirectional(accessDataViewModel.userNameProperty());
         majorField.textProperty().bindBidirectional(accessDataViewModel.userMajorProperty());
@@ -68,6 +72,10 @@ public class AccessFBView {
                 new PropertyValueFactory<Person,String>("major"));
         ageColumn.setCellValueFactory(
                 new PropertyValueFactory<Person,Integer>("age"));
+    }
+
+    public void applyStylesheet() {
+        scene.getStylesheets().add(getClass().getResource("/files/module6.css").toExternalForm());
     }
 
     @FXML
@@ -170,5 +178,24 @@ public class AccessFBView {
     public void handleCloseMenuItem() {
         System.out.println ("handleCloseMenuItem called");
         Platform.exit();
+    }
+
+    @FXML
+    public void handleDeleteMenuItem() {
+        System.out.println ("handleDeleteMenuItem called");
+
+        // check if TableView has any items
+        if (!tableView.getItems().isEmpty()) {
+            // remove the first item from the TableView
+            tableView.getItems().remove(0);
+            int firstLineBreak = outputField.getText().indexOf("\n");
+            if (firstLineBreak != -1) {
+                outputField.deleteText(0, firstLineBreak + 1);
+            } else {
+                outputField.clear();
+            }
+        } else {
+            System.out.println("The TableView is empty. No data to delete.");
+        }
     }
 }
