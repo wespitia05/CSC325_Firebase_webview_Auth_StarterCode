@@ -11,67 +11,80 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class AccessFBView {
 
 
-     @FXML
+    @FXML
     private TextField nameField;
     @FXML
     private TextField majorField;
     @FXML
     private TextField ageField;
     @FXML
-    private Button writeButton;
+    private Button addButton;
     @FXML
     private Button readButton;
     @FXML
+    private MenuItem registerMenuItem;
+    @FXML
+    private MenuItem closeMenuItem;
+    @FXML
     private TextArea outputField;
-     private boolean key;
+    @FXML
+    private TableView <Person> tableView;
+    @FXML
+    private TableColumn <Person, String> nameColumn;
+    @FXML
+    private TableColumn <Person, String> majorColumn;
+    @FXML
+    private TableColumn <Person, Integer> ageColumn;
+    private boolean key;
     private ObservableList<Person> listOfUsers = FXCollections.observableArrayList();
     private Person person;
     public ObservableList<Person> getListOfUsers() {
         return listOfUsers;
     }
 
-    void initialize() {
-
+    public void initialize() {
         AccessDataViewModel accessDataViewModel = new AccessDataViewModel();
         nameField.textProperty().bindBidirectional(accessDataViewModel.userNameProperty());
         majorField.textProperty().bindBidirectional(accessDataViewModel.userMajorProperty());
-        writeButton.disableProperty().bind(accessDataViewModel.isWritePossibleProperty().not());
+
+
+        nameColumn.setCellValueFactory(
+                new PropertyValueFactory<Person,String>("name"));
+        majorColumn.setCellValueFactory(
+                new PropertyValueFactory<Person,String>("major"));
+        ageColumn.setCellValueFactory(
+                new PropertyValueFactory<Person,Integer>("age"));
     }
 
     @FXML
-    private void addRecord(ActionEvent event) {
+    private void addRecord() {
+        System.out.println ("Add Button pressed");
         addData();
     }
 
-        @FXML
-    private void readRecord(ActionEvent event) {
+    @FXML
+    private void readRecord() {
+        System.out.println ("Read Button pressed");
         readFirebase();
     }
 
-            @FXML
-    private void regRecord(ActionEvent event) {
-        registerUser();
-    }
-
-     @FXML
+    @FXML
     private void switchToSecondary() throws IOException {
+        System.out.println ("Switch Button pressed");
         App.setRoot("/files/WebContainer.fxml");
     }
 
@@ -87,9 +100,9 @@ public class AccessFBView {
         ApiFuture<WriteResult> result = docRef.set(data);
     }
 
-        public boolean readFirebase()
-         {
-             key = false;
+    public boolean readFirebase()
+    {
+        key = false;
 
         //asynchronously retrieve all documents
         ApiFuture<QuerySnapshot> future =  App.fstore.collection("References").get();
@@ -98,36 +111,47 @@ public class AccessFBView {
         try
         {
             documents = future.get().getDocuments();
-            if(documents.size()>0)
-            {
+            if(documents.size()>0) {
+                List <Person> people = new ArrayList<>();
+                outputField.clear();
                 System.out.println("Outing....");
                 for (QueryDocumentSnapshot document : documents)
                 {
-                    outputField.setText(outputField.getText()+ document.getData().get("Name")+ " , Major: "+
+                    outputField.setText(outputField.getText()+ "Name: " + document.getData().get("Name")+ " , Major: "+
                             document.getData().get("Major")+ " , Age: "+
                             document.getData().get("Age")+ " \n ");
                     System.out.println(document.getId() + " => " + document.getData().get("Name"));
                     person  = new Person(String.valueOf(document.getData().get("Name")),
                             document.getData().get("Major").toString(),
                             Integer.parseInt(document.getData().get("Age").toString()));
+
+                    String name = document.getString("Name");
+                    String major = document.getString("Major");
+                    int age = document.getLong("Age").intValue();
+
+                    System.out.println("Name: " + name + ", Major: " + major + ", Age: " + age);
+
+                    person = new Person(name, major, age);
                     listOfUsers.add(person);
+                    people.add(person);
                 }
+                tableView.setItems(FXCollections.observableArrayList(people));
             }
             else
             {
-               System.out.println("No data");
+                System.out.println("No data");
             }
             key=true;
 
         }
         catch (InterruptedException | ExecutionException ex)
         {
-             ex.printStackTrace();
+            ex.printStackTrace();
         }
         return key;
     }
 
-        public void sendVerificationEmail() {
+    public void sendVerificationEmail() {
         try {
             UserRecord user = App.fauth.getUser("name");
             //String url = user.getPassword();
@@ -136,25 +160,15 @@ public class AccessFBView {
         }
     }
 
-    public boolean registerUser() {
-        UserRecord.CreateRequest request = new UserRecord.CreateRequest()
-                .setEmail("user@example.com")
-                .setEmailVerified(false)
-                .setPassword("secretPassword")
-                .setPhoneNumber("+11234567890")
-                .setDisplayName("John Doe")
-                .setDisabled(false);
+    @FXML
+    public void handleRegisterMenuItem() throws IOException {
+        System.out.println ("handleRegisterMenuItem called");
+        App.setRoot("/files/Register.fxml");
+    }
 
-        UserRecord userRecord;
-        try {
-            userRecord = App.fauth.createUser(request);
-            System.out.println("Successfully created new user: " + userRecord.getUid());
-            return true;
-
-        } catch (FirebaseAuthException ex) {
-           // Logger.getLogger(FirestoreContext.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-
+    @FXML
+    public void handleCloseMenuItem() {
+        System.out.println ("handleCloseMenuItem called");
+        Platform.exit();
     }
 }

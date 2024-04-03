@@ -17,14 +17,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 
-<AnchorPane prefHeight="571.0" prefWidth="894.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.csc325_firebase_webview_auth.view.AccessFBView">
+<AnchorPane prefHeight="571.0" prefWidth="894.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.csc325_firebase_webview_auth.view.AccessFBView">
    <children>
-      <MenuBar layoutY="1.0" prefHeight="27.0" prefWidth="894.0">
+      <MenuBar fx:id="menuBar" layoutY="1.0" prefHeight="27.0" prefWidth="894.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem mnemonicParsing="false" text="Register" />
-              <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem fx:id="registerMenuItem" mnemonicParsing="false" onAction="#handleRegisterMenuItem" text="Register" />
+              <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#handleCloseMenuItem" text="Close" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
@@ -41,7 +41,7 @@
       </MenuBar>
       <HBox layoutX="6.0" layoutY="28.0" prefHeight="535.0" prefWidth="880.0">
          <children>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+            <AnchorPane fx:id="leftAnchorPane" prefHeight="200.0" prefWidth="200.0">
                <children>
                   <ImageView fitHeight="150.0" fitWidth="129.0" layoutX="17.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
                      <effect>
@@ -60,15 +60,16 @@
             <VBox prefHeight="535.0" prefWidth="551.0">
                <children>
                   <TextArea fx:id="outputField" prefHeight="184.0" prefWidth="514.0" />
-                  <TableView prefHeight="351.0" prefWidth="514.0">
+                  <TableView fx:id="tableView" prefHeight="351.0" prefWidth="514.0">
                     <columns>
-                      <TableColumn prefWidth="75.0" text="C1" />
-                      <TableColumn prefWidth="75.0" text="C2" />
+                      <TableColumn fx:id="nameColumn" prefWidth="75.0" text="Name" />
+                      <TableColumn fx:id="majorColumn" prefWidth="75.0" text="Major" />
+                        <TableColumn fx:id="ageColumn" prefWidth="75.0" text="Age" />
                     </columns>
                   </TableView>
                </children>
             </VBox>
-            <VBox prefHeight="535.0" prefWidth="241.0" spacing="10.0">
+            <VBox fx:id="rightVBox" prefHeight="535.0" prefWidth="241.0" spacing="10.0">
                <children>
                   <TextField fx:id="nameField" alignment="TOP_LEFT" prefHeight="25.0" prefWidth="272.0" promptText="Name" />
                   <TextField fx:id="majorField" promptText="Major" />
@@ -80,7 +81,7 @@
                               <Insets left="20.0" right="20.0" />
                            </HBox.margin>
                         </Button>
-                        <Button fx:id="writeButton" mnemonicParsing="false" onAction="#addRecord" prefHeight="25.0" prefWidth="128.0" text="Write" textAlignment="CENTER">
+                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addRecord" prefHeight="25.0" prefWidth="128.0" text="Add" textAlignment="CENTER">
                            <HBox.margin>
                               <Insets left="20.0" right="20.0" />
                            </HBox.margin>

@@ -22,10 +22,11 @@ public class App extends Application {
     private final FirestoreContext contxtFirebase = new FirestoreContext();
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) throws IOException {
         fstore = contxtFirebase.firebase();
         fauth = FirebaseAuth.getInstance();
         scene = new Scene(loadFXML("/files/AccessFBView.fxml"));
+        scene.getStylesheets().add(getClass().getResource("/files/module6.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.show();
     }
