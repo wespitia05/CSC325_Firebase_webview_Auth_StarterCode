@@ -32,10 +32,10 @@
               <MenuItem fx:id="deleteMenuItem" mnemonicParsing="false" onAction="#handleDeleteMenuItem" text="Delete" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
+          <Menu mnemonicParsing="false" text="Upload">
+               <items>
+                  <MenuItem fx:id="uploadImageMenuItem" mnemonicParsing="false" onAction="#handleUploadImageMenuItem" text="Upload Image" />
+               </items>
           </Menu>
         </menus>
       </MenuBar>

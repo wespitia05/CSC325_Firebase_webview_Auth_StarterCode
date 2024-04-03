@@ -3,11 +3,16 @@ package com.example.csc325_firebase_webview_auth.view;//package modelview;
 import com.example.csc325_firebase_webview_auth.model.Person;
 import com.example.csc325_firebase_webview_auth.viewmodel.AccessDataViewModel;
 import com.google.api.core.ApiFuture;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.*;
-import com.google.firebase.auth.FirebaseAuthException;
+import com.google.cloud.storage.*;
+import com.google.cloud.storage.Blob;
 import com.google.firebase.auth.UserRecord;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -19,6 +24,8 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import static com.example.csc325_firebase_webview_auth.view.App.scene;
 
@@ -41,6 +48,8 @@ public class AccessFBView {
     private MenuItem closeMenuItem;
     @FXML
     private MenuItem deleteMenuItem;
+    @FXML
+    private MenuItem uploadImageMenuItem;
     @FXML
     private TextArea outputField;
     @FXML
@@ -198,4 +207,28 @@ public class AccessFBView {
             System.out.println("The TableView is empty. No data to delete.");
         }
     }
+
+    public void handleUploadImageMenuItem() {
+        System.out.println ("handleUploadImageMenuItem called");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Image File");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif"));
+        File selectedFile = fileChooser.showOpenDialog(null);
+        if (selectedFile != null) {
+            try {
+                uploadImage(selectedFile);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            System.out.println("No file selected");
+        }
+    }
+    public void uploadImage(File file) throws IOException {
+
+        System.out.println("Image uploaded successfully.");
+    }
 }
+
+
